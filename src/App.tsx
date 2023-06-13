@@ -90,7 +90,7 @@ function Footer() {
 }
 
 function App() {
-  const [phase, setPhase] = useState<Phase>("model_fit");
+  const [phase, setPhase] = useState<Phase>("waiting_start_button");
   return (
     <Container sx={{ height: '100%' }}>
       <Box sx={{ my: 4, height: '100%' }}>
