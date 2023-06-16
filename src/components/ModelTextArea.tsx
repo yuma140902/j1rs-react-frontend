@@ -4,12 +4,10 @@ import { DefaultApi } from '../api/apis/DefaultApi';
 import { useApiStart } from '../hooks';
 
 type Props = {
-  api: DefaultApi
   onRegister: (model_expression: string) => void
 };
 
-function ModelTextArea({ api, onRegister }: Props) {
-  useApiStart(api);
+function ModelTextArea({ onRegister }: Props) {
   const [expr, setExpr] = useState<string>("");
   return (
     <Grid container alignItems='stretch' direction='column'>

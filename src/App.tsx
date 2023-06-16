@@ -4,6 +4,7 @@ import { Box, Container, Typography } from '@mui/material';
 import { DataInput, ModelFit, ModelTextArea, StartButton, WaitModelFitting } from './components';
 import { DefaultApi } from './api/apis';
 import { useApiStart } from './hooks'
+import { CenterCircularProgress } from './components/util/CenterCircularProgress';
 
 type Phase = "waiting_start_button" | "waiting_model_input" | "posting_data" | "waiting_fit_model" | "model_fit";
 
@@ -27,16 +28,22 @@ function App() {
 
   const handleStartButton = () => {
     setIsWaitingApiResponse(true);
-    setPhase("waiting_model_input");
+    api.postStart().then(() => {
+      setIsWaitingApiResponse(false);
+      setPhase("waiting_model_input");
+    });
   }
 
-  const form = (phase: Phase) => {
+  const form = (isWaitingApiResponse: boolean, phase: Phase) => {
+    if (isWaitingApiResponse) {
+      return <CenterCircularProgress text='通信中...' />
+    }
     if (phase === 'waiting_start_button') {
       return <StartButton onClick={handleStartButton} />
     }
     else if (phase === 'waiting_model_input') {
       return (
-        <ModelTextArea api={api} onRegister={(expr) => {
+        <ModelTextArea onRegister={(expr) => {
           console.log("expr", expr);
           setPhase("posting_data");
         }} />);
@@ -69,7 +76,7 @@ function App() {
         <Typography variant="h5" color="text.secondary" component="h2">
           Webフロントエンド
         </Typography>
-        {form(phase)}
+        {form(isWaitingApiResponse, phase)}
       </Box>
       <Footer />
     </Container>
