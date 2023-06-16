@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import { Box, Button, Container, Grid, Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Box, Container, Typography } from '@mui/material';
 import { DataInput, ModelFit, ModelTextArea, StartButton, WaitModelFitting } from './components';
 
 type Phase = "waiting_start_button" | "waiting_model_input" | "posting_data" | "waiting_fit_model" | "model_fit";
