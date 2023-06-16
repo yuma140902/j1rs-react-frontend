@@ -12,7 +12,7 @@ function ModelTextArea({ onRegister }: Props) {
       <Grid item xs={12}>
         <Box sx={{ marginTop: 12 }} >
           <TextField multiline={true} label="モデルの式を入力" minRows={2} fullWidth
-            content={expr} onChange={event => setExpr(event.target.textContent ?? "")} />
+            onChange={event => setExpr(event.target.value)} value={expr} />
         </Box>
       </Grid>
       <Grid item xs={12} container justifyContent='flex-end'>
