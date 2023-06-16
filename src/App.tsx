@@ -101,7 +101,6 @@ function App() {
         </Typography>
         {form(isWaitingApiResponse, phase)}
       </Box>
-      <Footer />
     </Container>
   );
 }

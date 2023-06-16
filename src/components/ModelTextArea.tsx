@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Grid, TextField } from "@mui/material";
+import { Box, Button, Grid, TextField, Typography } from "@mui/material";
 import { DefaultApi } from '../api/apis/DefaultApi';
 import { useApiStart } from '../hooks';
 
@@ -13,6 +13,7 @@ function ModelTextArea({ onRegister }: Props) {
     <Grid container alignItems='stretch' direction='column'>
       <Grid item xs={12}>
         <Box sx={{ marginTop: 12 }} >
+          <Typography>目的変数 = Vの関数。推定すべきパラメータはp[0], p[1], ...とする</Typography>
           <TextField multiline={true} label="モデルの式を入力" minRows={2} fullWidth
             onChange={event => setExpr(event.target.value)} value={expr} />
         </Box>
