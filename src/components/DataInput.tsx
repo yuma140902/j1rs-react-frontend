@@ -7,7 +7,9 @@ type Props = {
 }
 
 function DataInput({ onRegister, onFinish }: Props) {
-  const [value, setValue] = useState<number>(NaN);
+  const [value, setValue] = useState<string>("");
+
+  console.log(value)
 
   return (
     <>
@@ -15,12 +17,15 @@ function DataInput({ onRegister, onFinish }: Props) {
         <Grid item container alignItems='stretch' direction='row'>
           <Grid item xs={11}>
             <TextField label="値を入力" type="number" fullWidth
-              content={Number.isNaN(value) ? "" : value.toString()}
-              onChange={event => setValue(Number.parseFloat(event.target.textContent ?? "NaN"))}
+              value={value}
+              onChange={event => { console.log("onchange", value); setValue(event.target.value) }}
             />
           </Grid>
           <Grid item xs={1} container justifyContent='stretch'>
-            <Button variant='contained' onClick={() => onRegister(value)}>入力</Button>
+            <Button variant='contained' onClick={() => {
+              onRegister(Number.parseFloat(value));
+              setValue("");
+            }}>入力</Button>
           </Grid>
         </Grid>
       </Box>
