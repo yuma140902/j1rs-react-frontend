@@ -7,6 +7,7 @@ import { DataInput, ModelFit, ModelTextArea, StartButton, WaitModelFitting } fro
 
 type Phase = "waiting_start_button" | "waiting_model_input" | "posting_data" | "waiting_fit_model" | "model_fit";
 
+
 function Footer() {
   return (
     <Box component="footer" sx={{ bgcolor: 'background.default', py: 6 }}>
@@ -21,6 +22,37 @@ function Footer() {
 
 function App() {
   const [phase, setPhase] = useState<Phase>("waiting_start_button");
+
+  const form = (phase: Phase) => {
+    if (phase === 'waiting_start_button') {
+      return <StartButton onClick={() => setPhase("waiting_model_input")} />
+    }
+    else if (phase === 'waiting_model_input') {
+      return (
+        <ModelTextArea onRegister={(expr) => {
+          console.log("expr", expr);
+          setPhase("posting_data");
+        }} />);
+    }
+    else if (phase === 'posting_data') {
+      return (
+        <DataInput onRegister={(value) => {
+          console.log("value", value);
+        }} onFinish={() => {
+          setPhase("waiting_fit_model")
+        }} />);
+    }
+    else if (phase === 'waiting_fit_model') {
+      return <WaitModelFitting />
+    }
+    else if (phase === 'model_fit') {
+      return <ModelFit />
+    }
+    else {
+      return <div />
+    }
+  }
+
   return (
     <Container sx={{ height: '100%' }}>
       <Box sx={{ my: 4, height: '100%' }}>
@@ -30,21 +62,7 @@ function App() {
         <Typography variant="h5" color="text.secondary" component="h2">
           Webフロントエンド
         </Typography>
-        {
-          (phase === "waiting_start_button") ? <StartButton onClick={() => setPhase("waiting_model_input")} /> :
-            (phase === "waiting_model_input") ? <ModelTextArea onRegister={(expr) => {
-              console.log("expr", expr);
-              setPhase("posting_data");
-            }} /> :
-              (phase === "posting_data") ? <DataInput onRegister={(value) => {
-                console.log("value", value);
-              }} onFinish={() => {
-                setPhase("waiting_fit_model")
-              }} /> :
-                (phase === "waiting_fit_model") ? <WaitModelFitting /> :
-                  (phase === "model_fit") ? <ModelFit /> :
-                    <div />
-        }
+        {form(phase)}
       </Box>
       <Footer />
     </Container>
