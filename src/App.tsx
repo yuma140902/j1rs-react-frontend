@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import './App.css';
 import { Box, Container, Typography } from '@mui/material';
 import { DataInput, ModelFit, ModelTextArea, StartButton, WaitModelFitting } from './components';
+import { DefaultApi } from './api/apis';
+import { useApiStart } from './hooks'
 
 type Phase = "waiting_start_button" | "waiting_model_input" | "posting_data" | "waiting_fit_model" | "model_fit";
 
@@ -19,15 +21,22 @@ function Footer() {
 }
 
 function App() {
+  const api = new DefaultApi();
   const [phase, setPhase] = useState<Phase>("waiting_start_button");
+  const [isWaitingApiResponse, setIsWaitingApiResponse] = useState<boolean>(false);
+
+  const handleStartButton = () => {
+    setIsWaitingApiResponse(true);
+    setPhase("waiting_model_input");
+  }
 
   const form = (phase: Phase) => {
     if (phase === 'waiting_start_button') {
-      return <StartButton onClick={() => setPhase("waiting_model_input")} />
+      return <StartButton onClick={handleStartButton} />
     }
     else if (phase === 'waiting_model_input') {
       return (
-        <ModelTextArea onRegister={(expr) => {
+        <ModelTextArea api={api} onRegister={(expr) => {
           console.log("expr", expr);
           setPhase("posting_data");
         }} />);
