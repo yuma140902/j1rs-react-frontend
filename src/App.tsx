@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Box, Container, Typography } from '@mui/material';
-import { DataInput, ModelFit, ModelTextArea, StartButton, WaitModelFitting } from './components';
+import { DataInput, ModelFitResult, ModelTextArea, StartButton, WaitModelFitting } from './components';
 import { DefaultApi } from './api/apis';
 import { useApiStart } from './hooks'
 import { CenterCircularProgress } from './components/util/CenterCircularProgress';
@@ -25,6 +25,7 @@ function App() {
   const api = new DefaultApi();
   const [phase, setPhase] = useState<Phase>("waiting_start_button");
   const [isWaitingApiResponse, setIsWaitingApiResponse] = useState<boolean>(false);
+  const [fitModel, setFitModel] = useState<string | undefined>(undefined);
 
   const handleStartButton = () => {
     setIsWaitingApiResponse(true);
@@ -32,6 +33,35 @@ function App() {
       setIsWaitingApiResponse(false);
       setPhase("waiting_model_input");
     });
+  }
+
+  const handleRegisterModel = (expression: string) => {
+    setIsWaitingApiResponse(true);
+    api.putModel({ modelRequest: { expression } }).then(() => {
+      setIsWaitingApiResponse(false);
+      setPhase("posting_data");
+    })
+  }
+
+  const handleRegisterData = (value: number) => {
+    if (Number.isNaN(value)) {
+      console.log("skipped bacause value is NaN");
+      return;
+    }
+
+    setIsWaitingApiResponse(true);
+    api.postM({ mRequest: { index: 1, value } }).then(() => {
+      setIsWaitingApiResponse(false);
+    })
+  }
+
+  const handleFinishData = () => {
+    setPhase("waiting_fit_model");
+    api.postDone().then((res) => {
+      setPhase("model_fit")
+      console.log("model_fit", res);
+      setFitModel(JSON.stringify(res, null, 2))
+    })
   }
 
   const form = (isWaitingApiResponse: boolean, phase: Phase) => {
@@ -43,24 +73,17 @@ function App() {
     }
     else if (phase === 'waiting_model_input') {
       return (
-        <ModelTextArea onRegister={(expr) => {
-          console.log("expr", expr);
-          setPhase("posting_data");
-        }} />);
+        <ModelTextArea onRegister={handleRegisterModel} />);
     }
     else if (phase === 'posting_data') {
       return (
-        <DataInput onRegister={(value) => {
-          console.log("value", value);
-        }} onFinish={() => {
-          setPhase("waiting_fit_model")
-        }} />);
+        <DataInput onRegister={handleRegisterData} onFinish={handleFinishData} />);
     }
     else if (phase === 'waiting_fit_model') {
       return <WaitModelFitting />
     }
     else if (phase === 'model_fit') {
-      return <ModelFit />
+      return <ModelFitResult model={fitModel} />
     }
     else {
       return <div />
